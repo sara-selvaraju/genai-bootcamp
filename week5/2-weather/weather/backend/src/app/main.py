@@ -27,6 +27,26 @@ s3_client = boto3.client("s3")
 class ChatRequest(BaseModel):
     prompt: str
 
+@tool
+def get_user_location() -> str:
+    """Get the user's location
+    """
+
+    # Implement user location lookup logic here
+    return "Seattle, USA"
+
+@tool
+def get_weather_location(location: str) -> str:
+    """Get the weather for a given location
+    Args:
+        location: City or location name
+    """
+    
+    #implement weather lookup logic hwew
+    location = location.replace(" ","+")
+    url = f'https://wttr.in/{location}?format=3'
+    weather_report = requests.get(url).text
+    return weather_report
 
 def SaveHistory(agent: Agent, session_id: str):
     state = {
@@ -51,7 +71,7 @@ def SaveHistory(agent: Agent, session_id: str):
 
 def LoadHistory(session_id: str) -> Agent:
     s3_key = f"sessions/{session_id}.json"
-    tools = []
+    tools = [get_user_location]
     try:
         response = s3_client.get_object(Bucket=state_bucket, Key=s3_key)
         state_json = response['Body'].read().decode('utf-8')
