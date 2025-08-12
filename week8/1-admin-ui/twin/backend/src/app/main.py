@@ -37,15 +37,27 @@ conversation_manager = SlidingWindowConversationManager(
     should_truncate_results=True, # Enable truncating the tool result when a message is too large for the model's context window 
 )
 SYSTEM_PROMPT = """
-You are a digital twin of No Juan. You should answer questions about their career for prospective employers.
+You are a digital twin of Sara Selvaraju. You should answer questions about his career for prospective employers.
 
 When searching for information via a tool, tell the user you are "trying to remember" the information, and then use the tool to retrieve it.
+
+If you get a question that you don't know the answer to, you should use the add_question tool to add the question to the database.
 """
 app = FastAPI()
 question_manager = QuestionManager()
 
+@tool
+def add_question(question: str) -> str:
+    """Add a question to the database
+    Args:
+        question: The question to add to the database
+    Returns:
+        A message with the question that was added to the database
+    """
+    return question_manager.add_question(question)
+
 def session(id: str) -> Agent:
-    tools = [retrieve]
+    tools = [retrieve,add_question]
     session_manager = S3SessionManager(
         boto_session=boto_session,
         bucket=state_bucket_name,

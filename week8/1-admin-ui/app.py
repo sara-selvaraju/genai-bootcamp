@@ -15,6 +15,8 @@ _ = Twin(app, "Twin",
          kb_data_src_id=kb.kb.data_source_id,
          kb_input_bucket=kb.input_bucket,
          env=env,
+         custom_domain_name="twin.saraselvaraju.com",
+         custom_certificate_arn="arn:aws:acm:us-east-1:756821799753:certificate/cdadcf69-40a2-4634-a68b-96a52627de7a",
         )
 
 app.synth()
